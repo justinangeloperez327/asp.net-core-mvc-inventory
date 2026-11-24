@@ -1,0 +1,10 @@
+@model Product
+@{ ViewData["Title"] = "Product details"; }
+<h1>Product details</h1>
+<div class="panel"><dl class="details">
+<dt>Name</dt><dd>@Model.Name</dd><dt>SKU</dt><dd>@Model.Sku</dd>
+<dt>Category</dt><dd>@(Model.Category ?? "—")</dd>
+<dt>Quantity</dt><dd>@Model.Quantity</dd><dt>Unit price</dt><dd>@Model.UnitPrice.ToString("N2")</dd>
+<dt>Stock value</dt><dd>@((Model.Quantity * Model.UnitPrice).ToString("N2"))</dd>
+<dt>Last updated (UTC)</dt><dd>@Model.UpdatedAtUtc.ToString("yyyy-MM-dd HH:mm")</dd>
+</dl><p><a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> · <a asp-action="Index">Back to inventory</a></p></div>

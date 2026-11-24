@@ -1,0 +1,15 @@
+@model IEnumerable<Product>
+@{ ViewData["Title"] = "Products"; }
+<h1>Products</h1><p>Manage your inventory and stock levels.</p>
+<form asp-action="Index" method="get" class="search">
+<input name="search" type="search" value="@ViewData["Search"]" placeholder="Name, SKU or category" aria-label="Search products" />
+<button type="submit">Search</button><a asp-action="Index">Clear</a>
+</form>
+<div class="table-wrap"><table><thead><tr><th>SKU</th><th>Name</th><th>Category</th><th>Quantity</th><th>Unit price</th><th>Stock value</th><th>Actions</th></tr></thead><tbody>
+@foreach (var item in Model)
+{
+<tr><td>@item.Sku</td><td>@item.Name</td><td>@item.Category</td><td>@item.Quantity</td><td>@item.UnitPrice.ToString("N2")</td><td>@((item.Quantity * item.UnitPrice).ToString("N2"))</td>
+<td><a asp-action="Details" asp-route-id="@item.Id">View</a> · <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> · <a asp-action="Delete" asp-route-id="@item.Id">Delete</a></td></tr>
+}
+@if (!Model.Any()) { <tr><td colspan="7">No products found.</td></tr> }
+</tbody></table></div>
