@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using InventoryMvc.Data;
 using InventoryMvc.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,7 @@ public class ProductsController(InventoryDbContext db) : Controller
         return product == null ? NotFound() : View(product);
     }
     public IActionResult Create() => View(new Product());
-    [HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles="Admin,Operator"),HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("Name,Sku,Category,UnitPrice")] Product product)
     {
         await ValidateSkuAsync(product);
@@ -38,7 +39,7 @@ public class ProductsController(InventoryDbContext db) : Controller
         var product = await db.Products.FindAsync(id);
         return product == null ? NotFound() : View(product);
     }
-    [HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles="Admin,Operator"),HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Sku,Category,UnitPrice")] Product input)
     {
         if (id != input.Id) return BadRequest();
@@ -57,12 +58,14 @@ public class ProductsController(InventoryDbContext db) : Controller
         var product = await db.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
         return product == null ? NotFound() : View(product);
     }
-    [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
+    [Authorize(Roles="Admin,Operator"),HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var product = await db.Products.FindAsync(id);
         if (product == null) return NotFound();
         if (product.Quantity != 0 || await db.StockMovements.AnyAsync(x=>x.ProductId==id)) { ModelState.AddModelError("", "Products with stock or movement history cannot be deleted."); return View("Delete", product); }
+        if(await db.PurchaseOrders.AnyAsync(x=>x.ProductId==id))return BadRequest("Product has purchase history.");
+        db.WarehouseBalances.RemoveRange(await db.WarehouseBalances.Where(x=>x.ProductId==id).ToListAsync());
         db.Products.Remove(product);
         await db.SaveChangesAsync();
         TempData["Success"] = "Product deleted.";

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using InventoryMvc.Data;
 using InventoryMvc.Models;
 using InventoryMvc.Services;
@@ -11,7 +12,7 @@ public class WarehousesController(InventoryDbContext db,WarehouseService service
  ViewBag.Products=await db.Products.ToListAsync();ViewBag.Warehouses=await db.Set<MasterData>().Where(x=>x.Kind=="Warehouse").ToListAsync();
  return View(await db.Set<WarehouseBalance>().ToListAsync());
  }
- [HttpPost,ValidateAntiForgeryToken]
+ [Authorize(Roles="Admin,Operator"),HttpPost,ValidateAntiForgeryToken]
  public async Task<IActionResult> Move(WarehouseInput input)
  {
  if(!ModelState.IsValid)return BadRequest("Invalid movement.");

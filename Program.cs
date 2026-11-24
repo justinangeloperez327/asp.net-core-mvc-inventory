@@ -4,6 +4,13 @@ using InventoryMvc.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+if(args.Contains("--hash-password"))
+{
+ Console.Write("Password: ");var password=new System.Text.StringBuilder();
+ while(true){var key=Console.ReadKey(true);if(key.Key==ConsoleKey.Enter)break;if(key.Key==ConsoleKey.Backspace){if(password.Length>0)password.Length--; }else if(!char.IsControl(key.KeyChar))password.Append(key.KeyChar);}
+ Console.WriteLine();if(password.Length<12)throw new InvalidOperationException("Use at least 12 characters.");
+ Console.WriteLine(new Microsoft.AspNetCore.Identity.PasswordHasher<string>().HashPassword("",password.ToString()));return;
+}
 var builder=WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<InventoryDbContext>(o=>o.UseSqlite(builder.Configuration.GetConnectionString("Inventory")??"Data Source=inventory.db"));

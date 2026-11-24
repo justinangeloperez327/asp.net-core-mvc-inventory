@@ -25,7 +25,8 @@ public class WarehouseService(InventoryDbContext db)
  long total=(long)product.Quantity+delta;
  if(total<0||total>int.MaxValue)throw new InvalidOperationException("Invalid total stock.");
  source.Quantity=(int)next;product.Quantity=(int)total;product.UpdatedAtUtc=DateTime.UtcNow;
- db.StockMovements.Add(new StockMovement{ProductId=product.Id,Delta=delta,BalanceAfter=product.Quantity,Reason=$"{input.Operation} warehouse {input.WarehouseId} to {input.DestinationId}: {input.Reason}"[..Math.Min(200,$"{input.Operation} warehouse {input.WarehouseId} to {input.DestinationId}: {input.Reason}".Length)]});
+ var reason=$"{input.Operation} warehouse {input.WarehouseId} to {input.DestinationId}: {input.Reason}";
+ db.StockMovements.Add(new StockMovement{ProductId=product.Id,Delta=delta,BalanceAfter=product.Quantity,Reason=reason[..Math.Min(200,reason.Length)]});
  }
  private async Task<WarehouseBalance> Balance(int warehouse,int product)
  {

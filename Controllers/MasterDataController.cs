@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using InventoryMvc.Data;
 using InventoryMvc.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,7 @@ public class MasterDataController(InventoryDbContext db):Controller
 {
  private static readonly string[] Kinds=["Category","Supplier","Warehouse"];
  public async Task<IActionResult> Index()=>View(await db.Set<MasterData>().OrderBy(x=>x.Kind).ThenBy(x=>x.Name).ToListAsync());
- [HttpPost,ValidateAntiForgeryToken]
+ [Authorize(Roles="Admin"),HttpPost,ValidateAntiForgeryToken]
  public async Task<IActionResult> Save([Bind("Id,Kind,Name,Notes")] MasterData input)
  {
  if(!Kinds.Contains(input.Kind)||!ModelState.IsValid)return BadRequest("Invalid master data.");
