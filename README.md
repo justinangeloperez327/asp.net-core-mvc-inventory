@@ -12,3 +12,14 @@ Create products, suppliers and warehouses, then record receipts, issues and tran
 `dotnet test Tests/Inventory.Tests.csproj`. GitHub Actions builds and tests main on push.
 
 Production deployment still requires formal migrations, HTTPS, backups, persistent data-protection keys, login throttling and security review.
+
+## Code formatting
+
+Run from the repository root with the .NET 10 SDK:
+
+```sh
+dotnet format InventoryMvc.csproj
+dotnet format Tests/Inventory.Tests.csproj
+```
+
+CI verifies whitespace formatting for both projects. Roslyn recommended analyzers and code-style diagnostics run during builds. Razor markup is governed by EditorConfig and the IDE Razor formatter, not by dotnet format.

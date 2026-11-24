@@ -16,3 +16,13 @@ jobs:
       - run: dotnet restore Tests/Inventory.Tests.csproj
       - run: dotnet build Tests/Inventory.Tests.csproj --no-restore --configuration Release
       - run: dotnet test Tests/Inventory.Tests.csproj --no-build --configuration Release
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet restore Tests/Inventory.Tests.csproj
+      - run: dotnet format whitespace InventoryMvc.csproj --no-restore --verify-no-changes
+      - run: dotnet format whitespace Tests/Inventory.Tests.csproj --no-restore --verify-no-changes
