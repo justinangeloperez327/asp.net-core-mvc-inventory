@@ -1,0 +1,6 @@
+@model IEnumerable<StockMovement>
+@{ ViewData["Title"]="Stock movements"; }
+<h1>Stock movements</h1><p><a asp-action="Create" class="button primary">Record movement</a></p>
+<div class="table-wrap"><table><thead><tr><th>Date (UTC)</th><th>Product</th><th>Change</th><th>Balance</th><th>Reason</th></tr></thead><tbody>
+@foreach(var item in Model) { <tr><td>@item.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm")</td><td>@item.Product.Name</td><td>@item.Delta</td><td>@item.BalanceAfter</td><td>@item.Reason</td></tr> }
+</tbody></table></div>

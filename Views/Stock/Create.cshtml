@@ -1,0 +1,12 @@
+@model MovementInput
+@{ ViewData["Title"]="Record stock movement"; }
+<h1>Record stock movement</h1>
+<form method="post" asp-action="Create" class="panel">
+<div asp-validation-summary="All" class="validation"></div>
+<div class="fields">
+<div><label asp-for="ProductId">Product</label><select asp-for="ProductId" asp-items="ViewBag.Products"><option value="0">Select product</option></select></div>
+<div><label asp-for="Quantity"></label><input asp-for="Quantity" min="1" /></div>
+<div><label asp-for="Outbound">Direction</label><select asp-for="Outbound"><option value="false">Stock in</option><option value="true">Stock out</option></select></div>
+<div><label asp-for="Reason"></label><input asp-for="Reason" /></div>
+</div><div class="actions"><button type="submit">Record</button><a asp-action="Index">Cancel</a></div>
+</form>

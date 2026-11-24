@@ -23,7 +23,7 @@ public class ProductsController(InventoryDbContext db) : Controller
     }
     public IActionResult Create() => View(new Product());
     [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Name,Sku,Category,Quantity,UnitPrice")] Product product)
+    public async Task<IActionResult> Create([Bind("Name,Sku,Category,UnitPrice")] Product product)
     {
         await ValidateSkuAsync(product);
         if (!ModelState.IsValid) return View(product);
@@ -39,7 +39,7 @@ public class ProductsController(InventoryDbContext db) : Controller
         return product == null ? NotFound() : View(product);
     }
     [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Sku,Category,Quantity,UnitPrice")] Product input)
+    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Sku,Category,UnitPrice")] Product input)
     {
         if (id != input.Id) return BadRequest();
         var product = await db.Products.FindAsync(id);
@@ -47,7 +47,7 @@ public class ProductsController(InventoryDbContext db) : Controller
         await ValidateSkuAsync(input, id);
         if (!ModelState.IsValid) return View(input);
         product.Name = input.Name; product.Sku = input.Sku; product.Category = input.Category;
-        product.Quantity = input.Quantity; product.UnitPrice = input.UnitPrice; product.UpdatedAtUtc = DateTime.UtcNow;
+        product.UnitPrice = input.UnitPrice; product.UpdatedAtUtc = DateTime.UtcNow;
         await db.SaveChangesAsync();
         TempData["Success"] = "Product updated.";
         return RedirectToAction(nameof(Index));
@@ -62,6 +62,7 @@ public class ProductsController(InventoryDbContext db) : Controller
     {
         var product = await db.Products.FindAsync(id);
         if (product == null) return NotFound();
+        if (product.Quantity != 0 || await db.StockMovements.AnyAsync(x=>x.ProductId==id)) { ModelState.AddModelError("", "Products with stock or movement history cannot be deleted."); return View("Delete", product); }
         db.Products.Remove(product);
         await db.SaveChangesAsync();
         TempData["Success"] = "Product deleted.";

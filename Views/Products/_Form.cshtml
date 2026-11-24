@@ -4,7 +4,6 @@
 <div><label asp-for="Name"></label><input asp-for="Name" /><span asp-validation-for="Name" class="validation"></span></div>
 <div><label asp-for="Sku"></label><input asp-for="Sku" /><span asp-validation-for="Sku" class="validation"></span></div>
 <div><label asp-for="Category"></label><input asp-for="Category" /><span asp-validation-for="Category" class="validation"></span></div>
-<div><label asp-for="Quantity"></label><input asp-for="Quantity" type="number" min="0" /><span asp-validation-for="Quantity" class="validation"></span></div>
 <div><label asp-for="UnitPrice"></label><input asp-for="UnitPrice" type="number" min="0" step="0.01" /><span asp-validation-for="UnitPrice" class="validation"></span></div>
 </div>
 <div class="actions"><button type="submit">Save product</button><a asp-action="Index">Cancel</a></div>

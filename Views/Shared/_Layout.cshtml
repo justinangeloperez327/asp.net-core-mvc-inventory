@@ -2,7 +2,7 @@
 <html lang="en">
 <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>@ViewData["Title"] - Inventory MVC</title><link rel="stylesheet" href="~/css/site.css" asp-append-version="true" /></head>
 <body>
-<header><div class="container nav"><a asp-controller="Products" asp-action="Index" class="brand">Inventory MVC</a><a asp-controller="Products" asp-action="Create" class="button primary">Add product</a></div></header>
+<header><div class="container nav"><a asp-controller="Products" asp-action="Index" class="brand">Inventory MVC</a><nav><a asp-controller="Dashboard" asp-action="Index">Dashboard</a> · <a asp-controller="Products" asp-action="Index">Products</a> · <a asp-controller="Stock" asp-action="Index">Stock movements</a></nav><a asp-controller="Products" asp-action="Create" class="button primary">Add product</a></div></header>
 <main class="container">
 @if (TempData["Success"] is string message) { <div class="notice" role="status">@message</div> }
 @RenderBody()

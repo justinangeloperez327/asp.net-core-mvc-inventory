@@ -1,0 +1,13 @@
+@model IEnumerable<Product>
+@{ ViewData["Title"]="Dashboard"; }
+<h1>Inventory dashboard</h1>
+<div class="panel"><dl class="details">
+<dt>Products</dt><dd>@Model.Count()</dd>
+<dt>Units in stock</dt><dd>@Model.Sum(x=>(long)x.Quantity)</dd>
+<dt>Stock value</dt><dd>@Model.Sum(x=>x.Quantity*x.UnitPrice).ToString("N2")</dd>
+<dt>Low stock (5 or fewer)</dt><dd>@Model.Count(x=>x.Quantity<=5)</dd>
+</dl></div>
+<h2>Low stock</h2><div class="table-wrap"><table><thead><tr><th>SKU</th><th>Product</th><th>Quantity</th></tr></thead><tbody>
+@foreach(var item in Model.Where(x=>x.Quantity<=5).OrderBy(x=>x.Quantity)){<tr><td>@item.Sku</td><td><a asp-controller="Products" asp-action="Details" asp-route-id="@item.Id">@item.Name</a></td><td>@item.Quantity</td></tr>}
+</tbody></table></div>
+<p><a asp-controller="Products" asp-action="Index">Products</a> · <a asp-controller="Stock" asp-action="Index">Stock movements</a></p>
