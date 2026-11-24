@@ -1,0 +1,10 @@
+@model IEnumerable<MasterData>
+@{ViewData["Title"]="Master data";}
+<h1>Categories, suppliers and warehouses</h1>
+<form asp-action="Save" method="post" class="panel"><div class="fields">
+<div><label>Type</label><select name="Kind"><option>Category</option><option>Supplier</option><option>Warehouse</option></select></div>
+<div><label>Name</label><input name="Name" required maxlength="120" /></div>
+<div><label>Notes / contact</label><input name="Notes" maxlength="250" /></div></div><p><button type="submit">Add record</button></p></form>
+@foreach(var item in Model){
+<form asp-action="Save" method="post" class="panel"><input type="hidden" name="Id" value="@item.Id"/><input type="hidden" name="Kind" value="@item.Kind"/><strong>@item.Kind</strong><div class="fields"><div><label>Name</label><input name="Name" value="@item.Name" required/></div><div><label>Notes</label><input name="Notes" value="@item.Notes"/></div></div><p><button type="submit">Update</button></p></form>
+}

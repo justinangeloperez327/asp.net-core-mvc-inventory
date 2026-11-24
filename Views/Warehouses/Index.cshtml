@@ -1,0 +1,13 @@
+@model IEnumerable<WarehouseBalance>
+@{ViewData["Title"]="Warehouses";var products=(List<Product>)ViewBag.Products;var warehouses=(List<MasterData>)ViewBag.Warehouses;}
+<h1>Warehouse stock</h1>
+<form asp-action="Move" method="post" class="panel"><div class="fields">
+<div><label>Product</label><select name="ProductId">@foreach(var p in products){<option value="@p.Id">@p.Name</option>}</select></div>
+<div><label>Warehouse</label><select name="WarehouseId">@foreach(var w in warehouses){<option value="@w.Id">@w.Name</option>}</select></div>
+<div><label>Operation</label><select name="Operation"><option>In</option><option>Out</option><option>Transfer</option></select></div>
+<div><label>Destination (transfer only)</label><select name="DestinationId"><option value="">None</option>@foreach(var w in warehouses){<option value="@w.Id">@w.Name</option>}</select></div>
+<div><label>Quantity</label><input name="Quantity" type="number" min="1" required/></div><div><label>Reason</label><input name="Reason" required maxlength="200"/></div>
+</div><p><button type="submit">Record movement</button></p></form>
+<div class="table-wrap"><table><thead><tr><th>Warehouse</th><th>Product</th><th>Quantity</th></tr></thead><tbody>
+@foreach(var b in Model){<tr><td>@warehouses.FirstOrDefault(x=>x.Id==b.WarehouseId)?.Name</td><td>@products.FirstOrDefault(x=>x.Id==b.ProductId)?.Name</td><td>@b.Quantity</td></tr>}
+</tbody></table></div>

@@ -1,0 +1,17 @@
+@model IEnumerable<PurchaseOrder>
+@{ViewData["Title"]="Purchase orders";var products=(List<Product>)ViewBag.Products;var master=(List<MasterData>)ViewBag.Master;}
+<h1>Purchase orders</h1>
+<form asp-action="Create" method="post" class="panel"><div class="fields">
+<div><label>Supplier</label><select name="SupplierId">@foreach(var x in master.Where(x=>x.Kind=="Supplier")){<option value="@x.Id">@x.Name</option>}</select></div>
+<div><label>Product</label><select name="ProductId">@foreach(var x in products){<option value="@x.Id">@x.Name</option>}</select></div>
+<div><label>Warehouse</label><select name="WarehouseId">@foreach(var x in master.Where(x=>x.Kind=="Warehouse")){<option value="@x.Id">@x.Name</option>}</select></div>
+<div><label>Quantity</label><input name="Quantity" type="number" min="1" required/></div>
+<div><label>Unit cost</label><input name="UnitCost" type="number" min="0" step="0.01" required/></div></div><p><button type="submit">Create draft</button></p></form>
+<div class="table-wrap"><table><thead><tr><th>PO</th><th>Supplier</th><th>Product</th><th>Warehouse</th><th>Qty</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+@foreach(var x in Model){<tr><td>@x.Id</td><td>@master.FirstOrDefault(m=>m.Id==x.SupplierId)?.Name</td><td>@products.FirstOrDefault(p=>p.Id==x.ProductId)?.Name</td><td>@master.FirstOrDefault(m=>m.Id==x.WarehouseId)?.Name</td><td>@x.Quantity</td><td>@((x.Quantity*x.UnitCost).ToString("N2"))</td><td>@x.Status</td><td>
+<form asp-action="Transition" method="post"><input type="hidden" name="id" value="@x.Id"/>
+@if(x.Status=="Draft"){<button name="actionName" value="Approve">Approve</button>}
+@if(x.Status=="Approved"){<button name="actionName" value="Receive">Receive</button>}
+@if(x.Status is "Draft" or "Approved"){<button name="actionName" value="Cancel">Cancel</button>}
+</form></td></tr>}
+</tbody></table></div>
