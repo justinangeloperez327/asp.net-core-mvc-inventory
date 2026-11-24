@@ -1,25 +1,21 @@
+using InventoryMvc.Data;
+using InventoryMvc.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 namespace InventoryMvc.Controllers;
-public class AccountController(IConfiguration config):Controller
-{
+public class AccountController(InventoryDbContext db):Controller {
  [AllowAnonymous] public IActionResult Login()=>View();
  [AllowAnonymous,HttpPost,ValidateAntiForgeryToken]
- public async Task<IActionResult> Login(string username,string password)
- {
- foreach(var role in new[]{"Admin","Operator","Viewer"})
- {
- var name=config[$"InventoryUsers:{role}:Username"];var hash=config[$"InventoryUsers:{role}:PasswordHash"];
- if(string.IsNullOrEmpty(name)||string.IsNullOrEmpty(hash)||username!=name||string.IsNullOrEmpty(password))continue;
- var hasher=new Microsoft.AspNetCore.Identity.PasswordHasher<string>();
- try {if(hasher.VerifyHashedPassword(name,hash,password)==Microsoft.AspNetCore.Identity.PasswordVerificationResult.Failed)continue;}
- catch(FormatException){continue;}
- var identity=new ClaimsIdentity(new[]{new Claim(ClaimTypes.Name,name),new Claim(ClaimTypes.Role,role)},CookieAuthenticationDefaults.AuthenticationScheme);
+ public async Task<IActionResult> Login(string username,string password){
+ var name=(username??"").Trim().ToUpperInvariant();
+ var user=await db.Set<InventoryUser>().SingleOrDefaultAsync(x=>x.Username==name&&x.Active);
+ if(user!=null&&!string.IsNullOrEmpty(password)&&password.Length<=256&&new PasswordHasher<string>().VerifyHashedPassword(name,user.PasswordHash,password)!=PasswordVerificationResult.Failed){
+ var identity=new ClaimsIdentity(new[]{new Claim(ClaimTypes.Name,user.Username),new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),new Claim(ClaimTypes.Role,user.Role),new Claim("stamp",user.Stamp)},CookieAuthenticationDefaults.AuthenticationScheme);
  await HttpContext.SignInAsync(new ClaimsPrincipal(identity));return RedirectToAction("Index","Dashboard");
  }
  ModelState.AddModelError("","Invalid credentials.");return View();

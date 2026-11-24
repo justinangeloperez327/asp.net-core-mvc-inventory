@@ -1,0 +1,7 @@
+@model IEnumerable<InventoryUser>
+@{ViewData["Title"]="Users";}
+<h1>User administration</h1>
+<form asp-action="Save" method="post" class="panel"><label>Username</label><input name="username" required maxlength="80"/><label>Role</label><select name="role"><option>Viewer</option><option>Operator</option><option>Admin</option></select><input type="hidden" name="active" value="true"/><label>Password</label><input name="password" type="password" minlength="12" required autocomplete="new-password"/><button type="submit">Create account</button></form>
+@foreach(var u in Model){
+<form asp-action="Save" method="post" class="panel"><input type="hidden" name="id" value="@u.Id"/><label>Username</label><input name="username" value="@u.Username" required/><label>Role</label><select name="role"><option selected="@(u.Role=="Viewer")">Viewer</option><option selected="@(u.Role=="Operator")">Operator</option><option selected="@(u.Role=="Admin")">Admin</option></select><label>Active</label><select name="active"><option value="true" selected="@u.Active">Yes</option><option value="false" selected="@(!u.Active)">No</option></select><label>New password (optional)</label><input name="password" type="password" minlength="12" autocomplete="new-password"/><button type="submit">Save</button></form>
+}

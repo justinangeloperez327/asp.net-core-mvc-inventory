@@ -1,18 +1,14 @@
 # Inventory MVC
-ASP.NET Core 10 MVC, EF Core and SQLite.
+ASP.NET Core 10 MVC, EF Core, SQLite.
 
-## Run
-Install .NET 10 SDK. Configure at least one account before running. No default password is supplied.
+## Setup
+Install .NET 10 SDK. Generate a password hash with `dotnet run -- --hash-password`. Set InventoryUsers__Admin__Username and InventoryUsers__Admin__PasswordHash environment variables before first startup. Run `dotnet run` and open http://localhost:5187. Configuration accounts are imported only when the users table is empty. Thereafter use the Users screen to manage accounts. Do not commit credentials.
 
-Use PowerShell to generate an ASP.NET Identity-compatible password hash with the included command:
-```powershell
-dotnet run -- --hash-password
-```
-Set environment variables InventoryUsers__Admin__Username and InventoryUsers__Admin__PasswordHash to your chosen username and generated hash. Operator and Viewer accounts use the same pattern with their respective role names.
-Run dotnet run and open http://localhost:5187.
+Admin manages users, master data and approvals; Operator records inventory and purchases; Viewer reads inventory. Changing an account invalidates its existing sessions. Audit records capture actor, operation, entity and key for asynchronous database writes; passwords are not recorded.
 
-Admin manages master records and approves purchases; Operator records stock and purchases; Viewer reads reports and inventory. Accounts are configuration-based, not a full user administration system.
+Create products, suppliers and warehouses, then record receipts, issues and transfers. Purchase orders are single-line with full receipt. Valuation uses current product price. Back up inventory.db before upgrades.
 
-Create a product, supplier and warehouse; record stock receipts, issues or transfers. Purchase orders are single-line and support draft, approval, receipt and cancellation. Existing unallocated stock is assigned to Main on upgrade. Back up inventory.db before upgrading. CSV valuation uses current product unit price, not FIFO or weighted-average costing.
+## Tests
+`dotnet test Tests/Inventory.Tests.csproj`. GitHub Actions builds and tests main on push.
 
-This is a small inventory MVP. Production deployment requires formal migrations, HTTPS, backups, persistent data-protection keys, account lifecycle management, security review and integration testing.
+Production deployment still requires formal migrations, HTTPS, backups, persistent data-protection keys, login throttling and security review.
